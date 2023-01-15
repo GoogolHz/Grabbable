@@ -27,6 +27,8 @@ coverage
 
 # Bower dependency directory (https://bower.io/)
 bower_components
+/node_modules/
+
 
 # node-waf configuration
 .lock-wscript
@@ -76,5 +78,3 @@ app.zip
 *.tsbuildinfo
 
 .DS_Store
-
-.openode

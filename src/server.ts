@@ -3,14 +3,16 @@
  * Licensed under the MIT License.
  */
 
-import * as MRE from '@microsoft/mixed-reality-extension-sdk';
-import dotenv from 'dotenv';
-import { resolve as resolvePath } from 'path';
-import App from './app';
+import * as MRE from "@microsoft/mixed-reality-extension-sdk";
+import dotenv from "dotenv";
+import { resolve as resolvePath } from "path";
+import App from "./app";
 
 // add some generic error handlers here, to log any exceptions we're not expecting
-process.on('uncaughtException', err => console.log('uncaughtException', err));
-process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
+process.on("uncaughtException", (err) => console.log("uncaughtException", err));
+process.on("unhandledRejection", (reason) =>
+	console.log("unhandledRejection", reason)
+);
 
 // Read .env if file exists
 dotenv.config();
@@ -22,14 +24,17 @@ dotenv.config();
 function runApp() {
 	// Start listening for connections, and serve static files.
 	const server = new MRE.WebHost({
-		baseUrl: 'http://grabbable.openode.dev',
-		baseDir: resolvePath(__dirname, '../public')
+		baseUrl: "https://weasel.mre.ninja",
+		port: 3002,
+		baseDir: resolvePath(__dirname, "../public"),
 	});
 
 	// Handle new application sessions
 	// server.adapter.onConnection(context => new App(context));
 	// server.adapter.onConnection(context => new App(context, server.baseUrl));
-	server.adapter.onConnection((context, params) => new App(context, params, server.baseUrl));
+	server.adapter.onConnection(
+		(context, params) => new App(context, params, server.baseUrl)
+	);
 }
 
 // Check whether code is running in a debuggable watched filesystem
@@ -40,7 +45,7 @@ function runApp() {
 // on the speed of your machine.
 const delay = 1000;
 const argv = process.execArgv.join();
-const isDebug = argv.includes('inspect') || argv.includes('debug');
+const isDebug = argv.includes("inspect") || argv.includes("debug");
 
 if (isDebug) {
 	setTimeout(runApp, delay);

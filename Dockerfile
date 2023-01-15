@@ -1,4 +1,5 @@
-FROM node:10.16-alpine
+FROM node:14-alpine
+
 WORKDIR /opt/mre
 
 ENV PORT=80

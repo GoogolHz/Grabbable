@@ -15,7 +15,7 @@
  *		4. As you delete an object (or want to stop synchronizing for some reason), call removeSyncFunc().
  *			e.g. syncfix.removeSyncFunc(syncId)
  *			'syncId' is the return value from a previous call to addSyncFunc().
- *	
+ *
  */
 export class UserSyncFix {
 	// Map of syncId's to functions to call at each sync time.
@@ -26,6 +26,8 @@ export class UserSyncFix {
 	private nextId = 0;
 
 	// Constructor.
+
+	// eslint-disable-next-line
 	constructor(private minSyncIntervalms: number) { }
 
 	// Call when a user has joined.
@@ -43,6 +45,7 @@ export class UserSyncFix {
 		this.syncTimer = null;
 
 		// Loop through and execute all the sync functions.
+		// eslint-disable-next-line
 		this.syncFuncs.forEach((f, id) => {
 			f();
 		});
@@ -51,7 +54,7 @@ export class UserSyncFix {
 	// Add a sync function.
 	public addSyncFunc(f: { (): void }) {
 		this.syncFuncs.set(this.nextId, f);
-		
+
 		return this.nextId++;
 	}
 
