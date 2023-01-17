@@ -3,15 +3,8 @@
  * Licensed under the MIT License.
  */
 
-/*
- *  wss://grabbable.openode.dev/?cpack=1912750109511123752&r=3   // Video-fractal
- *  wss://grabbable.openode.dev/?cpack=1912747872982401683   // Video-wand
- */
-
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
 import fetch from "node-fetch";
-
-// import delay from './utils/delay';
 
 /*
  * import sync-fix
@@ -21,7 +14,7 @@ import { UserSyncFix } from "./sync-fix";
 const DEBUG = false;
 
 /**
- * The structure of a grabbable entry in the hat database.
+ * The structure of a grabbable entry in the content pack.
  */
 type ArtifactDescriptor = {
 	displayName: string;
@@ -48,13 +41,13 @@ type ArtifactDescriptor = {
 };
 
 /**
- * The structure of the hat database.
+ * The structure of the content pack database.
  */
 type ArtifactDatabase = {
 	[key: string]: ArtifactDescriptor;
 };
 
-// // Load the database of hats.
+// // Load the content pack database.
 // // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const ArtifactDatabase: ArtifactDatabase = require('../public/hats.json');
 
@@ -62,14 +55,14 @@ type ArtifactDatabase = {
 // Convert a rotation from Unity-style Euler angles to a Quaternion.
 // If null or undefined passed in, use a 0 rotation.
 //======================================
-// function Unity2QuaternionRotation(euler: MRE.Vector3Like):
-//   MRE.Quaternion {
-//   return euler ? MRE.Quaternion.FromEulerAngles(
-//     euler.x * MRE.DegreesToRadians,
-//     euler.y * MRE.DegreesToRadians,
-//     euler.z * MRE.DegreesToRadians
-//   ) : new MRE.Quaternion();
-// }
+function Unity2QuaternionRotation(euler: MRE.Vector3Like):
+  MRE.Quaternion {
+  return euler ? MRE.Quaternion.FromEulerAngles(
+    euler.x * MRE.DegreesToRadians,
+    euler.y * MRE.DegreesToRadians,
+    euler.z * MRE.DegreesToRadians
+  ) : new MRE.Quaternion();
+}
 
 /*
  * sleep() function
@@ -77,11 +70,11 @@ type ArtifactDatabase = {
  * Returns a Promise that resolves afer 'ms' milliseconds.  To cause your code to pause for that
  * time, use 'await sleep(ms)' in an async function.
  */
-// function sleep(ms: number) {
-//   return new Promise((resolve) => {
-//     setTimeout(resolve, ms);
-//   });
-// }
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 interface BodyTracker {
 	foreTrack: MRE.Actor;
@@ -105,31 +98,18 @@ export default class Grabbable {
 	 * than they would be with MRE.Users.
 	 */
 
-	// private attachments = new Map<MRE.Guid, MRE.Actor>();
 	private attachments = new Map<MRE.Guid, MRE.Actor[]>();
-
 	private prefabs: { [key: string]: MRE.Prefab } = {};
-
 	private text: MRE.Actor = null;
 	private kitItemStylus: MRE.Actor = null;
 
 	// for triggers
 	private userTrackers = new Map<MRE.Guid, BodyTracker>();
-
 	private assets: MRE.AssetContainer;
 
 	// For the database of artifacts.
 	private artifactDB: ArtifactDatabase;
-
 	private contentPack: string;
-	
-	// private videoWand: MRE.Actor;
-	// private fractalTransA: MRE.Actor;
-	// private fractalTransB: MRE.Actor;
-	// private fractalTransC: MRE.Actor;
-	// private boat: MRE.Actor;
-	// private holder: MRE.Actor;
-	// private doors: MRE.Actor;
 
 	public PI = Math.PI;
 	public TAU = Math.PI * 2;
@@ -137,17 +117,6 @@ export default class Grabbable {
 	// private model: MRE.Actor = null;
 	// private materials: MRE.Material[] = [];
 	// private spamRoot: MRE.Actor;
-
-	/**
-	 * From GrabTest Functional test
-	 *
-	 */
-
-	// public expectedResultDescription = "Different grabbable items.";
-	// private state = 0;
-	// private clickCount = 0;
-
-	// private assets: MRE.AssetContainer;
 
 	private readonly SCALE = 0.2;
 
@@ -194,7 +163,7 @@ export default class Grabbable {
 			this.context.onStarted(() => this.started());
 		}
 	}
-		
+
 	/* eslint-enable */
 
 	//==========================
@@ -241,75 +210,10 @@ export default class Grabbable {
 		// animations, gltfs, etc.)
 		this.assets = new MRE.AssetContainer(this.context);
 
-		// const positionValue = { x: 0, y: 0, z: 0 };
-
-		// a root position parent:
-		// const rootPosition = MRE.Actor.Create(this.context, {
-		//   actor: {
-		//     name: `root-position`,
-		//     // parentId: inclination.id,
-		//     transform: {
-		//       app: { position: positionValue }
-		//     }
-		//   }
-		// });
-
 		//==========================
 		// Set up the synchronization function
 		//==========================
 		this.syncfix.addSyncFunc(() => this.synchronizeAttachments());
-
-		// this.roles = this.params.roles as
-		// this.rolesString = this.params.roles as string;
-		// this.rolesArray = this.rolesString.split(',');
-		//
-		// this.wingsString = this.params.wings as string;
-		// this.wingsArray = this.wingsString.split(',');
-		//
-		// this.chokerString = this.params.choker as string;
-		// this.chokerArray = this.chokerString.split(',');
-
-		// if (this.params.roles === undefined) {
-		// 			this.roles = "";
-		// 		} else {
-		// 			this.activeTestName = this.params.test as string;
-		// 			this.activeTestFactory = Factories[this.activeTestName];
-		// 			this.setupRunner();
-		// 		}
-		// this.contentPack = String(
-		// 	this.params.cpack || this.params.content_pack
-		// );
-
-		// console.log("cpack: ", this.contentPack);
-
-		// Load the database of artifacts
-
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		// this.artifactDB = require(`https://account.altvr.com/api/content_packs/${this.contentPack}/raw`);
-
-		// if (this.contentPack) {
-		// 	// Specify a url to a JSON file
-		// 	// https://account.altvr.com/content_packs/1187493048011980938
-		// 	// e.g. ws://10.0.1.89:3901?content_pack=1187493048011980938
-		// 	fetch(
-		// 		`https://account.altvr.com/api/content_packs/${this.contentPack}/raw.json`,
-		// 		{ method: "Get" }
-		// 	)
-		// 		.then((response: any) => response.json())
-		// 		.then((json: any) => {
-		// 			if (DEBUG) {
-		// 				console.log(json);
-		// 			}
-		// 			this.artifactDB = Object.assign({}, json);
-		// 			console.log(
-		// 				"cpack: ",
-		// 				JSON.stringify(this.artifactDB, null, "\t")
-		// 			);
-		// 			// this.context.onStarted(() => this.started());
-		// 			this.started();
-		// 		});
-		// }
-		
 
 		//=============================
 		// Set up a userJoined() callback to attach userTrackers to the Users.
@@ -353,46 +257,18 @@ export default class Grabbable {
 
 	private artyFactory() {
 		const artifacts = Object.entries(this.artifactDB);
-		// check for options first since order isn't guaranteed in a dict
-		// let makeMenu = false;
-		// let menu: MRE.Actor = null;
-
-		// artifacts.forEach(([key, value]) => {
-		// 	for (const k of Object.keys(value)) {
-		// 		if (k === "attachPoint") {
-		// 			makeMenu = true;
-		// 		}
-		// 	}
-		// });
-
-		// if (makeMenu) {
-		// 	console.log("makeMenu");
-		// 	// Create a parent object for all the menu items.
-		// 	menu = MRE.Actor.Create(this.context);
-
-		// 	// check for options first since order isn't guaranteed in a dict
-		// 	for (const k of Object.keys(this.artifactDB)) {
-		// 		if (k == "options") {
-		// 			const options = this.artifactDB[k];
-		// 			if (options.previewMargin) {
-		// 				this.previewMargin = options.previewMargin;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// artifacts.forEach(([key, value]) => {
 
 		artifacts.forEach(([key, value]) => {
 			const key1 = key;
 			if (key1) {
 				console.log(key1);
 			}
-			// let button;
 			const rotation =  value.rotation ? value.rotation : { x: 0, y: 0, z: 0 };
 			const scale = value.scale ? value.scale : { x: 1, y: 1, z: 1 };
 			const position = value.position ? value.position : { x: 0, y: 1, z: 0 };
 
 			if (value.resourceId) {
+				console.log(value.resourceId)
 				const placeArtifact = MRE.Actor.CreateFromLibrary(this.context, {
 					resourceId: value.resourceId, //holder
 					actor: {
@@ -411,54 +287,26 @@ export default class Grabbable {
 								),
 							},
 						},
-						rigidBody: {
-							mass: .01,
-						},
+						// rigidBody: value.rigidBody ? { mass: 0.0, useGravity: false } : {},
+						// collisionDetectionMode: "Continuous"
 					},
 				});
 
-				// if (value.menuScale) {
-				// 	console.log("yesyesyes", value.attachPoint);
-				// 	// Create an invisible cube with a collider
-				// 	button = MRE.Actor.CreatePrimitive(this.assets, {
-				// 		definition: {
-				// 			shape: MRE.PrimitiveShape.Box,
-				// 			dimensions: { x: 0.4, y: 0.4, z: 0.4 }, // make sure there's a gap
-				// 		},
-				// 		addCollider: true,
-				// 		actor: {
-				// 			parentId: menu.id,
-				// 			// name: hatId,
-				// 			transform: {
-				// 				local: {
-				// 					position: position,
-				// 					scale: { x: 1, y: 1, z: 1 }, // not affected by custom scale
-				// 				},
-				// 			},
-				// 			appearance: {
-				// 				enabled: false,
-				// 			},
-				// 		},
-				// 	});
-
-				// 	// Set a click handler on the button.
-				// 	// NOTE: button press event fails on MAC
-				// 	button
-				// 		.setBehavior(MRE.ButtonBehavior)
-				// 		.onClick((user) => this.wearAccessory(key, user.id));
-				// }
-
 				placeArtifact.created().then(() => {
+					console.log("after create");
 					if (value.grabbable) {
+						console.log("is grabbable");
 						placeArtifact.grabbable = true;
 					}
-					placeArtifact.rigidBody.enabled = value.rigidBody ? true : false;
-					
-				});
+	
+					if (value.rigidBody) {
+						placeArtifact.rigidBody.useGravity = false;
+						placeArtifact.rigidBody.detectCollisions = true;
+					}
+				});			
 			}
 		});
 
-		// function hasResourceId() {}
 	}
 
 
@@ -484,15 +332,12 @@ export default class Grabbable {
 							) as MRE.Prefab;
 						})
 						.catch((e) => MRE.log.error("app", e));
-					// } else if (artRecord.resourceId){
 				} else {
 					return Promise.resolve();
 				}
 			})
 		);
 	}
-
-	// private loadArtifacts() {}
 
 	//====================================
 	// userJoined() -- attach a tracker to each user
@@ -501,9 +346,6 @@ export default class Grabbable {
 		//================================
 		// Create a new tracker and attach it to the user
 		//================================
-
-		// const usersRoles = user.properties["altspacevr-roles"];
-		// const userRoles = user.properties;
 
 		// eslint-disable-next-line
 		const tracker: MRE.Actor = MRE.Actor.CreatePrimitive(this.assets, {
@@ -536,8 +378,6 @@ export default class Grabbable {
 			addCollider: true,
 		});
 
-		
-
 		/*
 		 * Let the syncFix know another user has joined.
 		 */
@@ -559,17 +399,7 @@ export default class Grabbable {
 		// 	trackers.neckTrack.detach();
 		// 	trackers.neckTrack.destroy();
 		//
-		// 	trackers.spinemidTrack.detach();
-		// 	trackers.spinemidTrack.destroy();
-		// 	// trackers.rightHandTrack.detach();
-		// 	// trackers.rightHandTrack.destroy();
-		// 	// trackers.fractalTrans.detach();
-		// 	// trackers.fractalTrans.destroy();
-		// 	// this.resetVenusVidSphere(String(user.id));
-		//
-		// 	// Remove the entry from the map.
-		// 	this.userTrackers.delete(user.id);
-		// }
+
 
 		if (this.attachments.has(user.id)) {
 			const userattachments: MRE.Actor[] = this.attachments.get(user.id);

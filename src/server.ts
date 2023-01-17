@@ -26,6 +26,8 @@ function runApp() {
 	const server = new MRE.WebHost({
 		baseUrl: "https://weasel.mre.ninja",
 		port: 3002,
+		// baseUrl: "`ws://10.0.1.6",
+		// port: 3901,
 		baseDir: resolvePath(__dirname, "../public"),
 	});
 
