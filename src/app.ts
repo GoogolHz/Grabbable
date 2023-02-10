@@ -293,14 +293,16 @@ export default class Grabbable {
 				});
 
 				placeArtifact.created().then(() => {
-					console.log("after create");
-					if (value.grabbable) {
-						console.log("is grabbable");
+					console.log("after create", value.displayName);
+					console.log('is typeof', typeof value.grabbable);
+					if (value.grabbable == true) {
+						console.log(value.displayName, " is grabbable");
 						placeArtifact.grabbable = true;
 					}
 	
 					if (value.rigidBody) {
-						placeArtifact.rigidBody.useGravity = false;
+						console.log("is rigidBody");
+						// placeArtifact.rigidBody.useGravity = true;
 						placeArtifact.rigidBody.detectCollisions = true;
 					}
 				});			
